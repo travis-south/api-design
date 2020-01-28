@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "name" . }}-node
+  labels:
+    app: {{ template "name" . }}-node
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.node.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 200%
+      maxUnavailable: 0%
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}-node
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-node
+          image: "{{ .Values.node.repository }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.node.pullPolicy }}
+          ports:
+            - containerPort: 9000
+          env:
+            - name: GIT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}
+                  key: GIT_TOKEN
+          resources:
+{{ toYaml .Values.node.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}

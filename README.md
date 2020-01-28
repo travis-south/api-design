@@ -1,75 +1,33 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# GitAPI
+A webservice that provides capabilities to create organization and manage the comments on your organization of your favorite Git service provider. Right now, supported provider is Github Enterprise.
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Please note that I didn't write the actual logic for the Github API integration as I don't have any Github Enterprise account.
 
-## Description
+## Architecture
+It's just a simple node app written in Typescript (NestJS) that provides adapter to other git service provider. 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## How to run/hack
+You should have docker and docker-compose on your machine for you to be able to run and edit this.
 
-## Installation
+To install dependencies, run `docker-composer run --rm workspace yarn install`.
 
-```bash
-$ npm install
-```
+To run built-in server and watch/reload while editing code, run `docker-compose up --build workspace`.
 
-## Running the app
+If you want to run tests, run `docker-compose run --rm workspace yarn run test`. 
 
-```bash
-# development
-$ npm run start
+You can view the documentation by accessing the index page `http://localhost:3000/`.
 
-# watch mode
-$ npm run start:dev
+## Deployment
+I have included a helm chart for easier deployment to k8s cluster.
 
-# production mode
-$ npm run start:prod
-```
+To deploy, you must edit the `./build-containers.sh` and change the container registry to the one that you have access.
 
-## Test
+Your k8s cluster must also have `tiller` installed and an ingress controller that's defined by the ingress class `gitapi-public-ingress`.
 
-```bash
-# unit tests
-$ npm run test
+To start deploying, run `./build-containers.sh` to build and push to registry. Then run `./deploy.sh` to deploy to your k8s cluster. Grab a coffee and wait until deployment is finished.
 
-# e2e tests
-$ npm run test:e2e
+## Monitoring
+You can easily use an EFK Stack (Elasticsearch, FluentD, Kibana) in your cluster and enable the logger library in NestJS to monitor your application.
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
+## Autoscaling
+This already includes Horizontal Pod-Autoscaler (HPA) to help you manage scaling needs.

@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+    workspace:
+        build:
+            context: ./
+            target: dev
+        entrypoint: ""
+        command: yarn run start:debug
+        volumes:
+            - ./:/srv
+        ports:
+            - "3000:3000"

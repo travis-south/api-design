@@ -1,0 +1,5 @@
+API deployed.
+
+To get the ingress's domain:
+
+    kubectl --namespace {{ .Release.Namespace }} get ingress -o jsonpath="{.items[*].spec.rules[*].host}" 

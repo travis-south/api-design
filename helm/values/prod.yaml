@@ -1,0 +1,6 @@
+
+env: prod
+tld: capagcuan.org
+
+node:
+  replicaCount: 2

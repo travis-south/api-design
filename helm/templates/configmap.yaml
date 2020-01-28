@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  env: {{ .Values.env }}
+  cors-allow-origin: {{ .Values.corsAllowOrigin | quote }}
+  version: {{ .Values.tag | quote }}
+  domain: {{ .Values.tld }}
